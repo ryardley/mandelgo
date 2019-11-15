@@ -14,6 +14,21 @@ import (
 	"github.com/lucasb-eyer/go-colorful"
 )
 
+// MaxIterations : Max iterations
+var MaxIterations int = 1000
+
+// Width : width
+var Width int = 1400
+
+// Height : height
+var Height int = 700
+
+// ScaleW : scalew
+var ScaleW float64 = 6.0
+
+// ScaleH : scaleh
+var ScaleH float64 = 3.0
+
 func main() {
 	start := time.Now()
 	generateMandelBrot()
@@ -28,15 +43,15 @@ func main() {
 	}
 
 	http.Handle("/", http.FileServer(http.Dir(directory)))
-	log.Printf("Serving %s on HTTP port: %s\n", directory, port)
+	log.Printf("Serving %s on HTTP http://localhost:%s\n", directory, port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
 
 func belongs(x float64, y float64) float64 {
 	realComponentOfResult := x
 	imaginaryComponentOfResult := y
-	maxIterations := 100
-	for i := 0; i < maxIterations; i++ {
+
+	for i := 0; i < MaxIterations; i++ {
 		tempRealComponent := realComponentOfResult*realComponentOfResult - imaginaryComponentOfResult*imaginaryComponentOfResult + x
 		tempImaginaryComponent := 2*realComponentOfResult*imaginaryComponentOfResult + y
 		realComponentOfResult = tempRealComponent
@@ -44,17 +59,21 @@ func belongs(x float64, y float64) float64 {
 
 		// Return a number as a percentage
 		if math.Sqrt(realComponentOfResult*realComponentOfResult+imaginaryComponentOfResult*imaginaryComponentOfResult) > 2 {
-			return (float64(i)/float64(maxIterations))*99.0 + 1.0
+			return (float64(i)/float64(MaxIterations))*float64(MaxIterations) + 1.0
 		}
 	}
 	return 0.0
 }
 
+func getXCoord(i int) float64 {
+	return ScaleW*float64(i)/float64(Width) - ScaleW/2.0
+}
+
+func getYCoord(j int) float64 {
+	return ScaleH*float64(j)/float64(Height) - ScaleH/2.0
+}
+
 func generateMandelBrot() {
-	Width := 1400
-	Height := 700
-	ScaleW := 6.0
-	ScaleH := 3.0
 
 	// background := color.RGBA{0, 0xFF, 0, 0xCC}
 	img := image.NewRGBA(image.Rect(0, 0, Width, Height))
@@ -75,6 +94,7 @@ func generateMandelBrot() {
 	}
 
 	outputFile, err := os.Create("images/test.png")
+
 	if err != nil {
 		fmt.Println("The was an error")
 	}
