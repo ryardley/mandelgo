@@ -88,7 +88,7 @@ func generateMandelBrot() {
 			if val == 0.0 {
 				img.Set(i, j, color.RGBA{0x00, 0x00, 0x00, 0xff})
 			} else {
-				img.Set(i, j, colorful.Hsv(60.0, 1.0, (val/100.0)))
+				img.Set(i, j, colorful.Hsv((val/10.0)+180.0, 1.0, 150))
 			}
 		}
 	}
